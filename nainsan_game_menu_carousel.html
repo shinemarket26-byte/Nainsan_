@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050505">
+<title>Nain San — Welcome to My World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050505;
+  --text: #f5f5f5;
+  --muted: #929292;
+  --line: rgba(255,255,255,.15);
+  --accent: #d7ff63;
+}
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
+  overflow: hidden;
+}
+button, a { font: inherit; }
+a { color: inherit; text-decoration: none; }
+button { color: inherit; }
+#intro {
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; background: #050505;
+  transition: opacity 1s ease, visibility 1s ease;
+}
+#intro.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+.intro-name {
+  font-size: clamp(45px, 10vw, 110px);
+  font-weight: 800; letter-spacing: -.08em; line-height: 1;
+  opacity: 0; transform: translateY(14px);
+  animation: nameIn 1s .4s ease forwards;
+}
+.intro-name span { color: transparent; -webkit-text-stroke: 1px #f5f5f5; }
+.intro-subtitle {
+  margin-top: 24px; font: clamp(10px, 1.7vw, 13px) 'DM Mono', monospace;
+  letter-spacing: .2em; text-transform: uppercase; color: #aaa;
+  opacity: 0; transform: translateY(8px);
+}
+#intro.show-subtitle .intro-subtitle { animation: subtitleIn .8s ease forwards; }
+.intro-line {
+  width: 0; height: 1px; background: var(--accent); margin-top: 25px;
+}
+#intro.show-line .intro-line { animation: lineIn .7s ease forwards; }
+@keyframes nameIn { to { opacity: 1; transform: translateY(0); } }
+@keyframes subtitleIn { to { opacity: 1; transform: translateY(0); } }
+@keyframes lineIn { to { width: min(220px, 45vw); } }
+
+#site {
+  min-height: 100dvh; opacity: 0; visibility: hidden;
+  transition: opacity .9s ease;
+  display: flex; flex-direction: column;
+  background:
+    radial-gradient(ellipse at 72% 44%, rgba(95,95,95,.12), transparent 43%),
+    #080808;
+}
+#site.ready { opacity: 1; visibility: visible; }
+#site::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .14;
+  background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.topbar {
+  width: min(1160px, calc(100% - 52px)); height: 70px; margin: auto;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--line); position: relative; z-index: 1;
+}
+.brand { display: flex; align-items: center; gap: 11px; font: 10px 'DM Mono', monospace; letter-spacing: .14em; }
+.brand-mark { width: 27px; height: 27px; border: 1px solid var(--accent); color: var(--accent); display: grid; place-items: center; transform: rotate(45deg); }
+.brand-mark span { transform: rotate(-45deg); }
+.status { color: var(--muted); font: 10px 'DM Mono', monospace; letter-spacing: .1em; }
+.status b { color: var(--accent); font-weight: 400; }
+.main {
+  width: min(1160px, calc(100% - 52px)); margin: auto; flex: 1;
+  display: grid; grid-template-columns: 1fr .9fr; gap: clamp(35px, 7vw, 95px);
+  align-items: center; padding: 32px 0; position: relative; z-index: 1;
+}
+.hero { animation: rise .8s ease both; }
+.eyebrow { color: var(--accent); font: 10px 'DM Mono', monospace; letter-spacing: .2em; text-transform: uppercase; }
+.hero h1 { font-size: clamp(52px, 8vw, 100px); line-height: .92; letter-spacing: -.085em; margin: 22px 0 18px; font-weight: 800; }
+.hero h1 span { display: block; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.7); }
+.hero p { color: var(--muted); font-size: 14px; line-height: 1.8; max-width: 370px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.tag { padding: 9px 12px; border: 1px solid var(--line); border-radius: 100px; color: #ddd; font: 10px 'DM Mono', monospace; letter-spacing: .06em; }
+.menu { animation: rise .8s .15s ease both; }
+.menu-heading { display: flex; align-items: end; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
+.menu-heading h2 { margin: 8px 0 0; font-size: clamp(24px, 3vw, 32px); letter-spacing: -.06em; }
+.menu-heading small { color: var(--accent); font: 10px 'DM Mono', monospace; }
+.game-carousel {
+  display: grid; grid-template-columns: 42px minmax(0, 1fr) 42px;
+  align-items: center; gap: 8px; perspective: 1000px;
+}
+.carousel-arrow {
+  width: 40px; height: 48px; border: 1px solid var(--line); border-radius: 12px;
+  color: var(--accent); background: rgba(255,255,255,.04); cursor: pointer;
+  font-size: 31px; line-height: 1; transition: .2s;
+}
+.carousel-arrow:hover, .carousel-arrow:focus-visible {
+  outline: none; background: var(--accent); color: #111; border-color: var(--accent);
+}
+.carousel-stage {
+  display: grid; grid-template-columns: .72fr 1.35fr .72fr; align-items: center;
+  gap: 10px; min-width: 0; overflow: visible; padding: 18px 0;
+}
+.game-card {
+  min-width: 0; min-height: 245px; border: 1px solid var(--line); border-radius: 16px;
+  background: linear-gradient(150deg, rgba(255,255,255,.09), rgba(255,255,255,.018) 60%), #101010;
+  padding: 15px 13px; text-align: left; display: flex; flex-direction: column;
+  align-items: flex-start; justify-content: space-between; cursor: pointer; position: relative;
+  overflow: hidden; color: var(--text); transition: transform .3s ease, opacity .3s ease, border-color .3s ease, background .3s ease, box-shadow .3s ease;
+}
+.game-card::before {
+  content: ""; position: absolute; width: 150px; height: 150px; border: 1px solid rgba(215,255,99,.13);
+  border-radius: 50%; right: -75px; top: 24px; box-shadow: 0 0 0 18px rgba(215,255,99,.025), 0 0 0 38px rgba(215,255,99,.018);
+}
+.game-card::after {
+  content: ""; position: absolute; inset: auto 0 0; height: 3px;
+  background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .3s;
+}
+.game-card.active-card {
+  min-height: 285px; border-color: var(--accent); transform: scale(1.025);
+  background: linear-gradient(145deg, rgba(215,255,99,.12), rgba(255,255,255,.025) 65%), #111;
+  box-shadow: 0 12px 40px rgba(0,0,0,.35), 0 0 28px rgba(215,255,99,.07);
+}
+.game-card.active-card::after { transform: scaleX(1); }
+.game-card.side-card { opacity: .56; transform: scale(.88); cursor: pointer; }
+.game-card.side-card:hover { opacity: .85; border-color: rgba(215,255,99,.5); }
+.card-index { position: relative; z-index: 1; color: var(--accent); font: 9px 'DM Mono', monospace; letter-spacing: .09em; }
+.card-symbol {
+  position: relative; z-index: 1; width: 54px; height: 54px; display: grid; place-items: center;
+  border: 1px solid rgba(215,255,99,.42); border-radius: 15px; color: var(--accent);
+  background: rgba(215,255,99,.06); font-size: 26px; margin: auto 0 18px;
+}
+.side-card .card-symbol { width: 42px; height: 42px; font-size: 20px; margin-bottom: 16px; }
+.card-name { position: relative; z-index: 1; font-size: clamp(11px, 1.4vw, 17px); font-weight: 800; letter-spacing: -.04em; line-height: 1.15; overflow-wrap: anywhere; }
+.side-card .card-name { font-size: 11px; }
+.card-hint { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 5px; width: 100%; margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font: 8px 'DM Mono', monospace; letter-spacing: .03em; }
+.card-hint b { color: var(--accent); font-size: 15px; }
+.carousel-footer { display: flex; justify-content: center; gap: 20px; color: var(--muted); font: 9px 'DM Mono', monospace; letter-spacing: .08em; }
+.keycap { display: inline-block; border: 1px solid var(--line); border-radius: 4px; padding: 4px 6px; margin: 0 3px; color: #ddd; font-style: normal; font-size: 8px; }
+footer {
+  width: min(1160px, calc(100% - 52px)); margin: auto; min-height: 47px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  border-top: 1px solid var(--line); color: #777; font: 9px 'DM Mono', monospace; letter-spacing: .09em;
+  position: relative; z-index: 1;
+}
+footer strong { color: #ddd; font-weight: 400; }
+.panel {
+  position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 18px;
+  background: rgba(0,0,0,.78); backdrop-filter: blur(12px);
+  opacity: 0; visibility: hidden; transition: opacity .25s, visibility .25s;
+}
+.panel.open { opacity: 1; visibility: visible; }
+.dialog {
+  width: min(620px, 100%); max-height: 82dvh; overflow: auto; padding: clamp(22px, 5vw, 36px);
+  border: 1px solid var(--line); border-radius: 19px; background: #111;
+  transform: translateY(12px); transition: transform .25s;
+}
+.panel.open .dialog { transform: translateY(0); }
+.dialog-top { display: flex; align-items: start; justify-content: space-between; gap: 15px; }
+.dialog-kicker { color: var(--accent); font: 10px 'DM Mono', monospace; letter-spacing: .16em; }
+.dialog h2 { margin: 10px 0 12px; font-size: clamp(27px, 5vw, 40px); letter-spacing: -.06em; }
+.dialog-intro { color: var(--muted); font-size: 12px; line-height: 1.8; margin-bottom: 22px; }
+.close { width: 36px; height: 36px; flex-shrink: 0; border: 1px solid var(--line); border-radius: 50%; background: transparent; cursor: pointer; font-size: 21px; }
+.close:hover { color: var(--accent); border-color: var(--accent); }
+.project-list { display: grid; gap: 10px; }
+.project-row { display: grid; grid-template-columns: 45px 1fr auto; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; }
+.project-code { width: 43px; height: 43px; display: grid; place-items: center; color: var(--accent); background: rgba(215,255,99,.08); border-radius: 10px; font: 13px 'DM Mono', monospace; }
+.project-meta { color: var(--accent); font: 9px 'DM Mono', monospace; }
+.project-row h3 { margin: 5px 0; font-size: 14px; }
+.project-row p { color: var(--muted); font-size: 10px; line-height: 1.6; }
+.action-link, .project-link { display: inline-block; padding: 11px 14px; border: 1px solid var(--line); border-radius: 100px; background: transparent; color: white; font-size: 11px; cursor: pointer; white-space: nowrap; }
+.action-link.primary { color: #111; background: var(--accent); border-color: var(--accent); font-weight: 800; }
+.project-link { color: var(--accent); font: 10px 'DM Mono', monospace; }
+.toast { position: fixed; z-index: 30; left: 50%; bottom: 20px; transform: translate(-50%, 15px); opacity: 0; background: var(--accent); color: #111; padding: 12px 17px; border-radius: 100px; font-size: 11px; font-weight: 800; pointer-events: none; transition: .25s; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 760px) {
+  body { overflow: auto; }
+  .topbar, .main, footer { width: calc(100% - 32px); }
+  .topbar { height: 58px; }
+  .status { font-size: 8px; }
+  .main { display: flex; flex-direction: column; justify-content: center; align-items: stretch; gap: 32px; padding: 34px 0 25px; }
+  .hero h1 { font-size: clamp(56px, 16vw, 83px); margin: 18px 0; }
+  .hero p { font-size: 12px; }
+  .tags { margin-top: 18px; }
+  .menu-heading h2 { font-size: 26px; }
+  .game-carousel { grid-template-columns: 32px minmax(0, 1fr) 32px; gap: 5px; }
+  .carousel-arrow { width: 31px; height: 42px; border-radius: 9px; font-size: 25px; }
+  .carousel-stage { gap: 4px; padding: 13px 0; grid-template-columns: .55fr 1.5fr .55fr; }
+  .game-card { min-height: 190px; padding: 10px 8px; border-radius: 12px; }
+  .game-card.active-card { min-height: 224px; }
+  .game-card.side-card { transform: scale(.82); }
+  .card-index { font-size: 7px; letter-spacing: 0; }
+  .card-symbol { width: 39px; height: 39px; border-radius: 11px; font-size: 19px; margin-bottom: 13px; }
+  .side-card .card-symbol { width: 31px; height: 31px; font-size: 16px; margin-bottom: 10px; }
+  .card-name { font-size: clamp(10px, 3vw, 14px); }
+  .side-card .card-name { font-size: 9px; }
+  .card-hint { font-size: 6px; margin-top: 13px; padding-top: 9px; }
+  .carousel-footer { gap: 10px; font-size: 8px; }
+  footer { flex-wrap: wrap; padding: 13px 0; line-height: 1.6; }
+  .project-row { grid-template-columns: 40px 1fr; }
+  .project-code { width: 38px; height: 40px; }
+  .project-link { grid-column: 2; justify-self: start; }
+}
+@media (max-height: 690px) and (min-width: 761px) {
+  .topbar { height: 55px; }
+  .main { padding: 16px 0; gap: 30px; }
+  .hero h1 { font-size: clamp(50px, 6vw, 72px); margin: 16px 0; }
+  .menu-item { min-height: 75px; padding: 12px 15px; }
+  footer { min-height: 36px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- INTRO ANIMATION -->
+<section id="intro" aria-label="Opening intro">
+  <div class="intro-name">NAIN SAN<span>.</span></div>
+  <div class="intro-subtitle">Gaming&nbsp; | &nbsp;Storytelling&nbsp; | &nbsp;Roleplay</div>
+  <div class="intro-line"></div>
+</section>
+
+<!-- MAIN WEBSITE -->
+<div id="site">
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Nain San home">
+      <span class="brand-mark"><span>N</span></span>
+      <span>NAIN SAN / WORLD</span>
+    </a>
+    <div class="status"><b>●</b> WORLD STATUS: OPEN</div>
+  </header>
+
+  <main class="main">
+    <section class="hero">
+      <div class="eyebrow">A creator's universe · 2026</div>
+      <h1>WELCOME<span>TO MY WORLD.</span></h1>
+      <p>A place for games, stories, roleplay, and other realities.</p>
+      <div class="tags">
+        <span class="tag">Gaming</span>
+        <span class="tag">Storytelling</span>
+        <span class="tag">Roleplay</span>
+      </div>
+    </section>
+
+    <section class="menu" aria-label="Main menu">
+      <div class="menu-heading">
+        <div>
+          <div class="eyebrow">Navigation / Main menu</div>
+          <h2>Choose your path.</h2>
+        </div>
+        <small id="carouselCount">01 / 03</small>
+      </div>
+
+      <div class="game-carousel" aria-label="Main menu carousel">
+        <button class="carousel-arrow" id="prevMenu" aria-label="Previous menu option">‹</button>
+        <div class="carousel-stage" id="carouselStage">
+          <button class="game-card side-card" data-card="channel" tabindex="-1" aria-label="Channel">
+            <span class="card-index">03</span><span class="card-symbol">▶</span><span class="card-name">CHANNEL</span>
+          </button>
+          <button class="game-card active-card" data-card="projects" aria-label="Content Projects">
+            <span class="card-index">01 / SELECTED</span><span class="card-symbol">✦</span>
+            <span class="card-name">CONTENT<br>PROJECTS</span>
+            <span class="card-hint">ENTER TO EXPLORE <b>↗</b></span>
+          </button>
+          <button class="game-card side-card" data-card="support" tabindex="-1" aria-label="Support">
+            <span class="card-index">02</span><span class="card-symbol">♡</span><span class="card-name">SUPPORT</span>
+          </button>
+        </div>
+        <button class="carousel-arrow" id="nextMenu" aria-label="Next menu option">›</button>
+      </div>
+      <div class="carousel-footer">
+        <span><i class="keycap">←</i><i class="keycap">→</i> NAVIGATE</span>
+        <span><i class="keycap">ENTER</i> SELECT</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© <strong>NAIN SAN</strong> <span id="year"></span></span>
+    <span>GAMING · STORYTELLING · ROLEPLAY</span>
+    <span>WELCOME TO MY WORLD ↗</span>
+  </footer>
+</div>
+
+<!-- PROJECTS PANEL -->
+<div class="panel" id="projectsPanel" role="dialog" aria-modal="true" aria-labelledby="projectsTitle">
+  <div class="dialog">
+    <div class="dialog-top">
+      <div>
+        <div class="dialog-kicker">Destination / 01</div>
+        <h2 id="projectsTitle">Content Projects</h2>
+      </div>
+      <button class="close" aria-label="Close">&times;</button>
+    </div>
+    <p class="dialog-intro">Every project starts with an idea. Discover what's currently in development.</p>
+    <div class="project-list" id="projectList"></div>
+  </div>
+</div>
+
+<!-- SUPPORT PANEL -->
+<div class="panel" id="supportPanel" role="dialog" aria-modal="true" aria-labelledby="supportTitle">
+  <div class="dialog">
+    <div class="dialog-top">
+      <div>
+        <div class="dialog-kicker">Destination / 02</div>
+        <h2 id="supportTitle">Support the Journey.</h2>
+      </div>
+      <button class="close" aria-label="Close">&times;</button>
+    </div>
+    <p class="dialog-intro">Every view, kind word, and bit of support helps me keep creating new stories and experiences. Thank you for being part of this journey.</p>
+    <a class="action-link primary" id="supportLink" href="https://sociabuzz.com/nainity/tribe" target="_blank" rel="noopener noreferrer">Support me ↗</a>
+    <button class="action-link" id="copySupport">Copy support link</button>
+  </div>
+</div>
+
+<!-- CHANNEL PANEL -->
+<div class="panel" id="channelPanel" role="dialog" aria-modal="true" aria-labelledby="channelTitle">
+  <div class="dialog">
+    <div class="dialog-top">
+      <div>
+        <div class="dialog-kicker">Destination / 03</div>
+        <h2 id="channelTitle">Enter the Channel.</h2>
+      </div>
+      <button class="close" aria-label="Close">&times;</button>
+    </div>
+    <p class="dialog-intro">Gaming, storytelling, roleplay, and more. Step into the channel and see what happens next.</p>
+    <a class="action-link primary" id="channelLink" href="https://www.youtube.com/@jvstnine" target="_blank" rel="noopener noreferrer">Visit YouTube ↗</a>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* GANTI DENGAN LINK ASLI LU */
+const SUPPORT_URL = "https://sociabuzz.com/nainity/tribe";
+const CHANNEL_URL = "https://www.youtube.com/@jvstnine";
+
+/* TAMBAHKAN PROJECT BARU DI DALAM ARRAY INI */
+const projects = [
+  {
+    number: "PROJECT / 001",
+    code: "SK",
+    title: "SAKYT",
+    status: "IN DEVELOPMENT",
+    description: "Punya cerita yang ingin dibagikan? Kirim cerita dari pengalaman atau imajinasi lu melalui Google Form. Cerita terpilih bisa diangkat menjadi konten storytelling Nain San.",
+    link: "https://forms.gle/5t8qVqhFpq7jzRFT7",
+    linkLabel: "Kirim Ceritamu ↗"
+  }
+  /*
+  Contoh menambah project baru:
+  ,
+  {
+    number: "PROJECT / 002",
+    code: "02",
+    title: "Nama Project",
+    status: "COMING SOON",
+    description: "Deskripsi project lu.",
+    link: "https://example.com",
+    linkLabel: "Explore project"
+  }
+  */
+];
+
+const intro = document.getElementById("intro");
+const site = document.getElementById("site");
+
+/* Opening sequence: name -> content categories -> fade out -> menu */
+window.addEventListener("load", () => {
+  setTimeout(() => intro.classList.add("show-subtitle"), 1300);
+  setTimeout(() => intro.classList.add("show-line"), 1850);
+  setTimeout(() => {
+    intro.classList.add("hide");
+    site.classList.add("ready");
+  }, 3500);
+  setTimeout(() => intro.remove(), 4600);
+});
+
+const panelMap = {
+  projects: document.getElementById("projectsPanel"),
+  support: document.getElementById("supportPanel"),
+  channel: document.getElementById("channelPanel")
+};
+let lastTrigger = null;
+
+function openPanel(name, trigger) {
+  lastTrigger = trigger;
+  panelMap[name].classList.add("open");
+  document.body.style.overflow = "hidden";
+  panelMap[name].querySelector(".close").focus();
+}
+
+function closePanels() {
+  Object.values(panelMap).forEach(panel => panel.classList.remove("open"));
+  document.body.style.overflow = "";
+  if (lastTrigger) lastTrigger.focus();
+}
+
+document.querySelectorAll("[data-panel]").forEach(button => {
+  button.addEventListener("click", () => openPanel(button.dataset.panel, button));
+});
+
+document.querySelectorAll(".close").forEach(button => {
+  button.addEventListener("click", closePanels);
+});
+
+Object.values(panelMap).forEach(panel => {
+  panel.addEventListener("click", event => {
+    if (event.target === panel) closePanels();
+  });
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closePanels();
+});
+
+document.getElementById("supportLink").href = SUPPORT_URL;
+document.getElementById("channelLink").href = CHANNEL_URL;
+
+
+/* GAME-LIKE MENU CAROUSEL */
+const menuItems = [
+  { id: "projects", index: "01", title: "CONTENT<br>PROJECTS", symbol: "✦", hint: "ENTER TO EXPLORE" },
+  { id: "support", index: "02", title: "SUPPORT", symbol: "♡", hint: "BACK THE JOURNEY" },
+  { id: "channel", index: "03", title: "CHANNEL", symbol: "▶", hint: "WATCH THE CONTENT" }
+];
+let selectedMenu = 0;
+
+function drawCarousel() {
+  const stage = document.getElementById("carouselStage");
+  const count = document.getElementById("carouselCount");
+  const prev = (selectedMenu + menuItems.length - 1) % menuItems.length;
+  const next = (selectedMenu + 1) % menuItems.length;
+  const cards = [
+    { item: menuItems[prev], pos: "side-card" },
+    { item: menuItems[selectedMenu], pos: "active-card" },
+    { item: menuItems[next], pos: "side-card" }
+  ];
+
+  stage.innerHTML = "";
+  cards.forEach(({item, pos}) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = `game-card ${pos}`;
+    card.dataset.card = item.id;
+    card.setAttribute("aria-label", item.id === menuItems[selectedMenu].id
+      ? `${item.id}, selected. Press Enter to open`
+      : `Select ${item.id}`);
+    if (pos === "side-card") card.tabIndex = -1;
+    const index = document.createElement("span");
+    index.className = "card-index";
+    index.textContent = pos === "active-card" ? `${item.index} / SELECTED` : item.index;
+    const symbol = document.createElement("span");
+    symbol.className = "card-symbol";
+    symbol.textContent = item.symbol;
+    const title = document.createElement("span");
+    title.className = "card-name";
+    title.innerHTML = item.title;
+    card.append(index, symbol, title);
+    if (pos === "active-card") {
+      const hint = document.createElement("span");
+      hint.className = "card-hint";
+      const hintText = document.createElement("span");
+      hintText.textContent = item.hint;
+      const arrow = document.createElement("b");
+      arrow.textContent = "↗";
+      hint.append(hintText, arrow);
+      card.appendChild(hint);
+    }
+    card.addEventListener("click", () => {
+      if (item.id !== menuItems[selectedMenu].id) {
+        selectedMenu = menuItems.findIndex(entry => entry.id === item.id);
+        drawCarousel();
+      } else {
+        openPanel(item.id, card);
+      }
+    });
+    stage.appendChild(card);
+  });
+  count.textContent = `${String(selectedMenu + 1).padStart(2, "0")} / 03`;
+}
+
+function moveCarousel(direction) {
+  selectedMenu = (selectedMenu + direction + menuItems.length) % menuItems.length;
+  drawCarousel();
+}
+
+document.getElementById("prevMenu").addEventListener("click", () => moveCarousel(-1));
+document.getElementById("nextMenu").addEventListener("click", () => moveCarousel(1));
+document.addEventListener("keydown", event => {
+  if (document.querySelector(".panel.open")) return;
+  if (event.key === "ArrowLeft") moveCarousel(-1);
+  if (event.key === "ArrowRight") moveCarousel(1);
+  if (event.key === "Enter" && document.activeElement.closest(".game-card")) {
+    const id = menuItems[selectedMenu].id;
+    openPanel(id, document.activeElement);
+  }
+});
+drawCarousel();
+
+const projectList = document.getElementById("projectList");
+const toast = document.getElementById("toast");
+let toastTimer;
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
+}
+
+function renderProjects() {
+  projectList.innerHTML = "";
+
+  projects.forEach(project => {
+    const row = document.createElement("article");
+    row.className = "project-row";
+
+    const code = document.createElement("div");
+    code.className = "project-code";
+    code.textContent = project.code;
+
+    const info = document.createElement("div");
+    const meta = document.createElement("div");
+    meta.className = "project-meta";
+    meta.textContent = `${project.number} · ${project.status}`;
+
+    const title = document.createElement("h3");
+    title.textContent = project.title;
+
+    const desc = document.createElement("p");
+    desc.textContent = project.description;
+    info.append(meta, title, desc);
+
+    let link;
+    if (project.link) {
+      link = document.createElement("a");
+      link.href = project.link;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+    } else {
+      link = document.createElement("button");
+      link.type = "button";
+      link.addEventListener("click", () => showToast("Project link belum tersedia. Stay tuned!"));
+    }
+    link.className = "project-link";
+    link.textContent = project.linkLabel || "View project";
+
+    row.append(code, info, link);
+    projectList.appendChild(row);
+  });
+}
+
+document.getElementById("copySupport").addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(SUPPORT_URL);
+    showToast("Support link copied!");
+  } catch {
+    showToast("Support link: " + SUPPORT_URL);
+  }
+});
+
+document.getElementById("year").textContent = new Date().getFullYear();
+renderProjects();
+</script>
+</body>
+</html>
